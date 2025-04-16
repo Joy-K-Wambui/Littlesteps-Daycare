@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.AmbientLight?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.littlesteps.littlesteps.Controllers.EventNotificationController">
+    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1245.0" spacing="10" style="-fx-background-color: #bebebe;" styleClass="main-container" stylesheets="@styles.css">
+
+        <!-- Header Section -->
+        <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="105.0" prefWidth="1279.0" spacing="5" VBox.vgrow="ALWAYS">
+            <Label style="-fx-font-size: 24; -fx-font-weight: bold;" text="LittleSteps Daycare" />
+         <AmbientLight color="CHARTREUSE" lightOn="true" />
+            <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Event and Notification Management Dashboard" />
+        </VBox>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#backToDashboard" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: teal;" stylesheets="@styles.css" text="⬅">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#backToAdminDashboard" prefHeight="25.0" prefWidth="82.0" stylesheets="@styles.css" text="Back" />
+         </children>
+      </HBox>
+
+        <!-- Main Content -->
+        <GridPane hgap="10" prefWidth="1095.0" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints maxWidth="300.0" minWidth="100.0" prefWidth="167.99998474121094" />
+                <ColumnConstraints maxWidth="300.0" minWidth="100.0" prefWidth="232.00001525878906" />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            </columnConstraints>
+
+            <!-- Event Scheduling Section -->
+            <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Schedule New Event" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <Label text="Event Title:" GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <TextField fx:id="eventTitleField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <DatePicker fx:id="eventDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <Label text="Target Audience:" GridPane.columnIndex="0" GridPane.rowIndex="3">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <ComboBox fx:id="eventAudienceDropdown" prefHeight="25.0" prefWidth="95.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="4">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <TextArea fx:id="eventDescriptionArea" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+            <Button onAction="#handleScheduleEvent" text="Schedule Event" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <font>
+               <Font size="14.0" />
+            </font></Button>
+
+            <!-- Notification Sending Section -->
+            <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Send Notifications" GridPane.columnIndex="2" GridPane.rowIndex="0">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <Label text="Notification Title:" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <TextField fx:id="notificationTitleField" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+
+            <Label text="Message:" GridPane.columnIndex="2" GridPane.rowIndex="2">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <TextArea fx:id="notificationMessageArea" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+
+            <Label text="Recipient Group:" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <font>
+               <Font size="18.0" />
+            </font></Label>
+            <ComboBox fx:id="notificationAudienceDropdown" prefHeight="25.0" prefWidth="95.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+
+            <Button onAction="#handleSendNotification" text="Send Notification" GridPane.columnIndex="3" GridPane.rowIndex="4">
+            <font>
+               <Font size="14.0" />
+            </font></Button>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints maxHeight="187.33335367838538" minHeight="172.66666666666663" prefHeight="172.66666666666663" />
+            <RowConstraints maxHeight="45.33333333333337" minHeight="30.66664632161462" prefHeight="45.33333333333337" />
+         </rowConstraints>
+         <VBox.margin>
+            <Insets left="150.0" />
+         </VBox.margin>
+        </GridPane>
+
+        <!-- Centered Feedback Label -->
+        <HBox alignment="CENTER">
+            <Label fx:id="feedbackLabel" style="-fx-text-fill: green;" />
+        </HBox>
+
+        <!-- Bottom Section with Tables -->
+        <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="20">
+            <VBox spacing="5">
+                <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Upcoming Events" />
+                <TableView fx:id="upcomingEventsTable" prefHeight="150">
+                    <columns>
+                        <TableColumn fx:id="eventDateColumn" prefWidth="100" text="Date" />
+                        <TableColumn fx:id="eventTitleColumn" prefWidth="200" text="Event Title" />
+                        <TableColumn fx:id="eventAudienceColumn" prefWidth="150" text="Audience" />
+                    </columns>
+                </TableView>
+            </VBox>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5">
+                <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Recent Notifications Sent" />
+                <TableView fx:id="recentNotificationsTable" prefHeight="150">
+                    <columns>
+                        <TableColumn fx:id="notificationDateColumn" prefWidth="100" text="Date Sent" />
+                        <TableColumn fx:id="notificationTitleColumn" prefWidth="200" text="Title" />
+                    </columns>
+                </TableView>
+            </VBox>
+         <VBox.margin>
+            <Insets left="55.0" />
+         </VBox.margin>
+        </HBox>
+      <Label text="Littlesteps Daycare Management System" textAlignment="CENTER" />
+    </VBox>
+</ScrollPane>

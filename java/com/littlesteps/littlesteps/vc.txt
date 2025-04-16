@@ -1,0 +1,639 @@
+//prev advanced
+package com.littlesteps.littlesteps.Controllers;
+
+import com.littlesteps.littlesteps.Dao.BillingDAO;
+import com.littlesteps.littlesteps.Records.BillingRecord;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
+import java.sql.*;
+
+public class BillingInvoiceController {
+
+    // FXML components
+    @FXML
+    private ComboBox<String> childComboBox;
+    @FXML
+    private ComboBox<String> childNameDropdown;
+    @FXML private Label childNameLabel, totalBalanceLabel;
+    @FXML private TableView<BillingRecord> invoiceTable;
+    @FXML private TableColumn<BillingRecord, String> serviceColumn;
+    @FXML private TableColumn<BillingRecord, Double> discountColumn;
+    @FXML private TableColumn<BillingRecord, Double> amountDueColumn;
+    @FXML private TableColumn<BillingRecord, Double> lateFeeColumn;
+    @FXML private TableColumn<BillingRecord, Double> totalAmountColumn;
+    @FXML private TableColumn<BillingRecord, String> statusColumn;
+    @FXML private TableColumn<BillingRecord, String> paymentMethodColumn;
+    @FXML private TableColumn<BillingRecord, Integer> tenant_idColumn;
+    @FXML private TableColumn<BillingRecord, Date> issueDateColumn;
+    @FXML private TableColumn<BillingRecord, Date> dueDateColumn;
+    @FXML private TableColumn<BillingRecord, Date> paymentDateColumn;
+    @FXML private Button processPaymentButton, printInvoiceButton;
+    @FXML private ComboBox<String> paymentMethodDropdown;
+    @FXML private ImageView childBlobImage;
+
+    private BillingDAO billingDAO;
+    private int childId;
+    private Child selectedChild;
+
+    // Observable list for child data
+    private ObservableList<String> childrenList = FXCollections.observableArrayList();
+
+    // Database connection setup (replace with your actual connection string, username, password)
+    private Connection conn;
+
+
+    public void backToDashboard(ActionEvent actionEvent) {
+    }
+
+    public void setSelectedChild(Child selectedChild) {
+        this.selectedChild = selectedChild;
+    }
+
+    public class Child {
+        private int id;
+        private String name;
+
+        public Child(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return name; // This will be displayed in the ComboBox
+        }
+    }
+
+    // Initialize the Controller
+    @FXML
+    public void initialize() throws SQLException {
+        serviceColumn.setCellValueFactory(cellData -> cellData.getValue().serviceProperty());
+        issueDateColumn.setCellValueFactory(cellData -> cellData.getValue().getIssueDateProperty());
+        discountColumn.setCellValueFactory(cellData -> cellData.getValue().discountProperty().asObject());
+        amountDueColumn.setCellValueFactory(cellData -> cellData.getValue().amountDueProperty().asObject());
+        lateFeeColumn.setCellValueFactory(cellData -> cellData.getValue().lateFeeProperty().asObject());
+        totalAmountColumn.setCellValueFactory(cellData -> cellData.getValue().totalAmountProperty().asObject());
+        dueDateColumn.setCellValueFactory(cellData -> cellData.getValue().getDueDateProperty());
+        statusColumn.setCellValueFactory(cellData -> cellData.getValue().statusProperty());
+        paymentMethodColumn.setCellValueFactory(cellData -> cellData.getValue().paymentMethodProperty());
+        paymentDateColumn.setCellValueFactory(cellData -> cellData.getValue().getPaymentDateProperty());
+        tenant_idColumn.setCellValueFactory(cellData -> cellData.getValue().tenantIdProperty().asObject());
+
+        connectToDatabase();
+        billingDAO = new BillingDAO(conn);
+
+        loadChildData();
+
+
+        // Set child names into the ComboBox
+        childComboBox.setItems(childrenList);
+        childComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                ObservableList<BillingRecord> invoices = null;
+                try {
+                    invoices = billingDAO.getBillingRecordsByChildId(selectedChild.getId());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                invoiceTable.setItems(invoices);
+                childNameLabel.setText(newValue); // Update the label with the selected child's name
+                onChildSelected();
+                int childId = selectedChild.getId();
+                loadInvoicesForSelectedChild(childId);
+            }
+        });
+
+        // Default to disable the payment button until a child is selected
+        processPaymentButton.setDisable(true);
+
+        // Set up the Payment Method dropdown
+        paymentMethodDropdown.setItems(FXCollections.observableArrayList("Credit Card", "Cash", "Bank Transfer"));
+
+    }
+
+    // Database connection method
+    private void connectToDatabase() {
+        try {
+            conn = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/littlestepsdaycare", "root", "password");
+            System.out.println("Database connection successful.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to connect to the database.");
+        }
+    }
+    // Method to load child names into the combo box
+    public void loadChildComboBox() {
+        String query = "SELECT child_id, first_name, last_name FROM children";  // SQL query to fetch data
+
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            // ObservableList to hold combo box items
+            ObservableList<String> childrenList = FXCollections.observableArrayList();
+
+            // Add results from database to the list
+            while (rs.next()) {
+                String fullName = rs.getString("first_name") + " " + rs.getString("last_name");
+                childrenList.add(fullName);  // Add the full name to the list
+            }
+
+            // Set items in the ComboBox
+            childComboBox.setItems(childrenList);
+
+            // Optional: You can set a default value
+            if (!childrenList.isEmpty()) {
+                childComboBox.getSelectionModel().selectFirst();  // Select the first item by default
+            }
+
+            // Set up listener for child selection changes
+            childComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    int childId = getChildIdByName(newValue); // Retrieves the ID of the selected child
+                    updateChildDetailsPane(childId); // Updates details pane for the selected child
+                }
+            });
+
+            // Close the result set and prepared statement
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error loading combo box: " + e.getMessage());
+        }
+    }
+
+    private void updateChildDetailsPane(int childId) {
+        Child child = getChildById(childId); // Implement this method to fetch Child by ID
+        if (child != null) {
+            childNameLabel.setText(child.getName());
+            loadInvoicesForSelectedChild(child.getId());
+        }
+    }
+    private Child getChildById(int childId) {
+        String query = "SELECT child_id, first_name, last_name FROM children WHERE child_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, childId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Child(rs.getInt("child_id"), rs.getString("first_name") + " " + rs.getString("last_name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if not found
+    }
+    public void loadInvoicesForSelectedChild(int childId) {
+        // SQL query to get invoices for the selected child
+        String query = "SELECT invoice_id, description, amount, status FROM invoice WHERE child_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, childId);  // Set the child_id parameter
+
+            ResultSet rs = stmt.executeQuery();
+
+            // ObservableList to hold invoice data for the table
+            ObservableList<BillingRecord> invoiceList = FXCollections.observableArrayList();
+
+            // Process each row from the result set
+            while (rs.next()) {
+                int invoiceId = rs.getInt("invoice_id");
+                String description = rs.getString("description");
+                double amount = rs.getDouble("amount");
+                String status = rs.getString("status");
+
+                // Create an Invoice object and add to the list
+                BillingRecord invoice = new BillingRecord();
+                invoiceList.add(invoice);
+            }
+
+            // Set the invoice data to the invoiceTable
+            invoiceTable.setItems(invoiceList);
+
+            // Close the result set
+            rs.close();
+
+        } catch (SQLException e) {
+            System.out.println("Error loading invoices: " + e.getMessage());
+        }
+    }
+
+
+    // Method to retrieve child ID from a selected full name
+    public int getChildIdByName(String fullName) {
+        String[] nameParts = fullName.split(" "); // Splitting full name into first and last name
+        if (nameParts.length != 2) {
+            // Handle invalid name format (not having exactly two parts)
+            return -1; // Or handle it in another way, like throwing an exception
+        }
+        String firstName = nameParts[0];
+        String lastName = nameParts[1];
+
+        // Query to fetch child_id by first and last name
+        String query = "SELECT child_id FROM children WHERE first_name = ? AND last_name = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, firstName);
+            stmt.setString(2, lastName);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("child_id");
+            } else {
+                return -1;  // Child not found
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching child ID: " + e.getMessage());
+            return -1;  // Error case
+        }
+    }
+
+    // Load child data from the database
+    private void loadChildData() {
+        try {
+            String query = "SELECT child_id, first_name, last_name FROM children"; // Replace with actual query
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                childrenList.add(rs.getString("first_name") + " " + rs.getString("last_name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to load children data.");
+        }
+    }
+
+    // When a child is selected, display their details and load invoices
+    @FXML
+    private void onChildSelected() {
+        String selectedChild = childComboBox.getValue();
+
+        if (selectedChild != null) {
+            loadChildDetails(selectedChild);
+
+            // Enable payment processing
+            processPaymentButton.setDisable(false);
+
+            // Set placeholder image for the child (replace with actual image fetching logic)
+            childBlobImage.setImage(new Image("https://via.placeholder.com/150"));
+        } else {
+            // Disable the payment button if no child is selected
+            processPaymentButton.setDisable(true);
+        }
+    }
+
+    // Load child's details like DOB from the database
+    private void loadChildDetails(String childName) {
+        // Check if childName is valid
+        if (childName == null || childName.trim().isEmpty()) {
+            showAlert("Invalid Input", "Child name cannot be empty.");
+            return; // Exit the method early if the child name is invalid
+        }
+
+        try {
+            if (conn == null || conn.isClosed()) {
+                throw new SQLException("Database connection is not established.");
+            }
+
+            // Split the child name to extract first and last names
+            String[] nameParts = childName.split(" ");
+            if (nameParts.length != 2) {
+                showAlert("Error", "Invalid child name format.");
+                return;
+            }
+
+            String firstName = nameParts[0];
+            String lastName = nameParts[1];
+
+            String query = "SELECT first_name, last_name, dob, address FROM children WHERE first_name = ? AND last_name = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, firstName);
+            stmt.setString(2, lastName);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                // Populate details using fetched data
+                String fullName = rs.getString("first_name") + " " + rs.getString("last_name");
+                String dob = rs.getString("dob"); // Assuming DOB is in string format
+                String address = rs.getString("address");
+
+                // Update labels with the retrieved data
+                childNameLabel.setText(fullName);
+                // Update other labels like DOB, Address, etc., if needed
+
+            } else {
+                showAlert("Not Found", "Child details not found in the database.");
+            }
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to load child details.");
+        }
+    }
+
+    private ObservableList<BillingRecord> loadBillingData(BillingDAO billingDAO, int childId) throws SQLException {
+        if (conn == null || conn.isClosed()) {
+            throw new SQLException("Database connection is not established or is closed.");
+        }
+
+        this.billingDAO = billingDAO;
+        this.childId = childId;
+        ObservableList<BillingRecord> invoiceList = FXCollections.observableArrayList();
+        String query = "SELECT service_description, issue_date, discount, amount_due, late_fee, total_amount, due_date, payment_status, payment_method, payment_date, tenant_id FROM invoice WHERE child_id = ?";
+
+        System.out.println("Executing query: " + query + " with childId: " + childId);
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, childId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    BillingRecord bill = new BillingRecord();
+                    bill.setService(rs.getString("service_description"));
+                    bill.setIssueDate(rs.getDate("issue_date"));
+                    bill.setDiscount(rs.getDouble("discount"));
+                    bill.setAmountDue(rs.getDouble("amount_due"));
+                    bill.setLateFee(rs.getDouble("late_fee"));
+                    bill.setTotalAmount(rs.getDouble("total_amount"));
+                    bill.setDueDate(rs.getDate("due_date"));
+                    bill.setStatus(rs.getString("payment_status"));
+                    bill.setPaymentMethod(rs.getString("payment_method"));
+                    bill.setPaymentDate(rs.getDate("payment_date"));
+                    bill.setTenantId(rs.getInt("tenant_id"));
+                    invoiceList.add(bill);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQL Exception: " + e.getMessage());
+            throw new SQLException("Error fetching billing records", e);
+        }
+
+        System.out.println("Records fetched: " + invoiceList.size());
+        Platform.runLater(() -> invoiceTable.setItems(invoiceList)); // Ensure JavaFX thread
+        return invoiceList;
+    }
+    // Manually add data
+    ObservableList<BillingRecord> invoiceList = FXCollections.observableArrayList(
+            new BillingRecord("Monthly Childcare", "2024-11-01", 10.00, 250.00, 0.00, 240.00, "2024-11-15", "Paid", "Card", "2024-11-05", 1),
+            new BillingRecord("After-School Program", "2024-11-02", 5.00, 150.00, 0.00, 145.00, "2024-11-16", "Pending", null, null, 2),
+            new BillingRecord("Weekly Babysitting", "2024-11-03", 0.00, 100.00, 10.00, 110.00, "2024-11-17", "Overdue", null, null, 3),
+            new BillingRecord("Holiday Care Program", "2024-11-05", 0.00, 200.00, 0.00, 200.00, "2024-11-25", "Cancelled", null, null, 4),
+            new BillingRecord("Monthly Childcare", "2024-11-01", 20.00, 300.00, 0.00, 280.00, "2024-11-20", "Paid", "Bank Transfer", "2024-11-10", 5)
+    );
+
+    // Set data to table
+        invoiceTable.setItems(invoiceList);
+
+
+    // Handle Process Payment Button Click
+    @FXML
+    private void handleProcessPayment(ActionEvent event) {
+        String paymentMethod = paymentMethodDropdown.getValue();
+        if (paymentMethod == null || paymentMethod.isEmpty()) {
+            showAlert("Payment Method", "Please select a payment method.");
+            return;
+        }
+
+        // Simulate payment processing (replace with actual payment gateway integration)
+        showAlert("Payment Processed", "Payment for " + childNameLabel.getText() + " has been successfully processed.");
+    }
+
+    // Handle Print Invoice Button Click
+    @FXML
+    private void handlePrintInvoice(ActionEvent event) {
+        // Simulate printing the invoice (replace with actual printing logic)
+        showAlert("Invoice Printed", "The invoice for " + childNameLabel.getText() + " has been printed.");
+    }
+
+    // Show alert box with title and content
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
+}
+
+
+
+
+//version root
+import com.littlesteps.littlesteps.InvoiceItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
+import java.text.DecimalFormat;
+
+public class BillingInvoiceController {
+
+    public ScrollPane mainScrollPane;
+    @FXML
+    private Label childNameLabel;
+    @FXML
+    private Label dobLabel;
+    @FXML
+    private TableView<InvoiceItem> invoiceTable;
+    @FXML
+    private TableColumn<InvoiceItem, String> serviceColumn;
+    @FXML
+    private TableColumn<InvoiceItem, String> descriptionColumn;
+    @FXML
+    private TableColumn<InvoiceItem, Number> amountColumn;
+    @FXML
+    private Label totalBalanceLabel;
+    @FXML
+    private ComboBox<String> paymentMethodDropdown;
+    @FXML
+    private ComboBox<String> childComboBox;
+    @FXML
+    private ComboBox<String> childNameDropdown;
+    private AnchorPane mainPane; // For applying the scroll pane
+
+    private final ObservableList<InvoiceItem> invoiceItems = FXCollections.observableArrayList(
+            new InvoiceItem("Daycare", "Monthly Fee", 300.00),
+            new InvoiceItem("Meals", "Lunch Program", 50.00),
+            new InvoiceItem("Extra Care", "Extended Hours", 75.00)
+    );
+
+    private final DecimalFormat currencyFormat = new DecimalFormat("$#.00");
+    private Connection connection;
+
+
+    private void connectToDatabase() {
+        try {
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/littlestepsdaycare", "root", "password");
+            System.out.println("Database connection successful.");
+        } catch (SQLException e) {
+            System.out.println("Database connection failed: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void initialize() {
+        // Populate the child dropdown and payment method
+        paymentMethodDropdown.setItems(FXCollections.observableArrayList(
+                "Credit Card", "Cash", "Bank Transfer"
+        ));
+
+        // Set up the columns in the table
+        serviceColumn.setCellValueFactory(cellData -> cellData.getValue().serviceProperty());
+        descriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+        amountColumn.setCellValueFactory(cellData -> cellData.getValue().amountProperty());
+
+        // Load the invoice items
+        invoiceTable.setItems(invoiceItems);
+
+        // Update total balance on initialization
+        updateTotalBalance();
+
+        // Add listener to auto-update total when invoice items change
+        invoiceItems.addListener((ListChangeListener<InvoiceItem>) change -> updateTotalBalance());
+    }
+
+    // Method to load child names into the combo box
+    public void loadChildComboBox() {
+        String query = "SELECT child_id, first_name, last_name FROM children";  // SQL query to fetch data
+
+        try {
+            // Check if the connection is open, if not, try connecting
+            if (connection == null || connection.isClosed()) {
+                connectToDatabase();  // Ensure connectToDatabase() is working properly
+            }
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // ObservableList to hold combo box items
+            ObservableList<String> childrenList = FXCollections.observableArrayList();
+
+            // Add results from database to the list
+            while (resultSet.next()) {
+                String fullName = resultSet.getString("first_name") + " " + resultSet.getString("last_name");
+                childrenList.add(fullName);  // Add the full name to the list
+            }
+
+            // Set items in the ComboBox
+            childComboBox.setItems(childrenList);
+
+            // Optional: You can set a default value
+            if (!childrenList.isEmpty()) {
+                childComboBox.getSelectionModel().selectFirst();  // Select the first item by default
+            };
+
+            // Close the result set and prepared statement
+            resultSet.close();
+            preparedStatement.close();
+
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error loading combo box: " + e.getMessage());
+        }
+
+        loadChildComboBox();
+    }
+    private void updateChildDetails() {
+        ExpressionValue childrenList = null;
+        String selectedChild = (String) childrenList.getValue();
+        if (selectedChild != null) {
+            // For demonstration, hardcode sample data based on the selected child
+            if (selectedChild.equals("John Doe")) {
+                childNameLabel.setText("John Doe");
+                dobLabel.setText("01/02/2015");
+                invoiceItems.setAll(
+                        new InvoiceItem("Daycare", "Monthly Fee", 300.00),
+                        new InvoiceItem("Meals", "Lunch Program", 50.00)
+                );
+            } else if (selectedChild.equals("Jane Smith")) {
+                childNameLabel.setText("Jane Smith");
+                dobLabel.setText("11/07/2014");
+                invoiceItems.setAll(
+                        new InvoiceItem("Daycare", "Monthly Fee", 300.00),
+                        new InvoiceItem("Extra Care", "Extended Hours", 75.00)
+                );
+            }
+            updateTotalBalance();
+        }
+    }
+
+    public void loadchildNameDropdown() {
+        String query = "SELECT first_name, last_name FROM children";  // SQL query to fetch data
+
+        try {
+            // Check if the connection is open, if not, try connecting
+            if (connection == null || connection.isClosed()) {
+                connectToDatabase();  // Ensure connectToDatabase() is working properly
+            }
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // ObservableList to hold combo box items
+            ObservableList<String> childrenList = FXCollections.observableArrayList();
+
+            // Add results from database to the list
+            while (resultSet.next()) {
+                String fullName = resultSet.getString("first_name") + " " + resultSet.getString("last_name");
+                childrenList.add(fullName);  // Add the full name to the list
+            }
+
+            // Set items in the ComboBox
+            childNameDropdown.setItems(childrenList);
+
+            // Optional: You can set a default value
+            if (!childrenList.isEmpty()) {
+                childNameDropdown.getSelectionModel().selectFirst();  // Select the first item by default
+            }
+
+            // Close the result set and prepared statement
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error loading combo box: " + e.getMessage());
+        }
+    }
+
+    private void updateTotalBalance() {
+        double total = invoiceItems.stream().mapToDouble(InvoiceItem::getAmount).sum();
+        totalBalanceLabel.setText(currencyFormat.format(total));
+    }

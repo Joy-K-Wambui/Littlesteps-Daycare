@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1265.0" style="-fx-background-color: white;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.littlesteps.littlesteps.Controllers.DashboardController">
+   <content>
+      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1265.0">
+         <left>
+            <VBox prefHeight="676.0" prefWidth="203.0" style="-fx-background-color: teal;" BorderPane.alignment="CENTER">
+               <children>
+                  <Button alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#handleHomebtn" prefHeight="67.0" prefWidth="257.0" text="Home" textAlignment="RIGHT">
+                     <graphic>
+                        <ImageView fitHeight="35.0" fitWidth="35.0">
+                           <image>
+                              <Image url="@images/homepage.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="25.0" right="5.0" top="45.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleChildrenbtn" prefHeight="67.0" prefWidth="257.0" text="Children" textAlignment="RIGHT">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="59.0">
+                           <image>
+                              <Image url="@images/childrenIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="25.0" right="5.0" top="55.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button alignment="TOP_RIGHT" layoutX="35.0" layoutY="177.0" mnemonicParsing="false" onAction="#handleBillingbtn" prefHeight="67.0" prefWidth="257.0" text="Billing" textAlignment="RIGHT">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="59.0">
+                           <image>
+                              <Image url="@images/billing.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="25.0" right="5.0" top="55.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button alignment="TOP_RIGHT" layoutX="35.0" layoutY="301.0" mnemonicParsing="false" onAction="#handleArticlebtn" prefHeight="67.0" prefWidth="257.0" text="Articles" textAlignment="RIGHT">
+                     <graphic>
+                        <ImageView fitHeight="39.0" fitWidth="37.0">
+                           <image>
+                              <Image url="@images/articlesIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="25.0" right="5.0" top="55.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button alignment="TOP_RIGHT" layoutX="35.0" layoutY="301.0" mnemonicParsing="false" onAction="#handleLogoutbtn" prefHeight="49.0" prefWidth="165.0" style="-fx-background-color: teal; -fx-border-radius: 25; -fx-border-color: red; -fx-text-fill: red;" text="Log Out" textAlignment="RIGHT" textFill="RED">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="59.0">
+                           <image>
+                              <Image url="@images/logouticon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="25.0" right="25.0" top="100.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+         </left>
+         <right>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="629.0" prefWidth="306.0" style="-fx-background-color: white;" BorderPane.alignment="TOP_RIGHT">
+               <children>
+                  <SplitPane fx:id="right_splitpane" dividerPositions="0.4980198019801981" orientation="VERTICAL" prefHeight="681.0" prefWidth="306.0">
+                    <items>
+                      <AnchorPane fx:id="notificationPane" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" style="-fx-background-color: pink;" stylesheets="@styles.css">
+                           <children>
+                              <TextArea fx:id="notification_textview" layoutX="7.0" layoutY="53.0" prefHeight="275.0" prefWidth="285.0" />
+                              <Label layoutX="14.0" layoutY="14.0" text="Notifications">
+                                 <graphic>
+                                    <ImageView fitHeight="28.0" fitWidth="29.0">
+                                       <image>
+                                          <Image url="@images/notificationIcon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane fx:id="activitiesPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="319.0" prefWidth="303.0" style="-fx-background-color: teal;">
+                           <children>
+                              <Label layoutX="80.0" layoutY="22.0" text="ACTIVITIES TODAY">
+                                 <graphic>
+                                    <ImageView fitHeight="26.0" fitWidth="23.0">
+                                       <image>
+                                          <Image url="@images/hcd.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic></Label>
+                              <TableView fx:id="activityTable" layoutY="53.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="282.0" prefWidth="295.0">
+                                <columns>
+                                  <TableColumn fx:id="daycareColumn" prefWidth="33.99994146823883" text="ID" />
+                                  <TableColumn fx:id="activityColumn" prefWidth="248.6666030883789" text="Event &amp; Activities" />
+                                </columns>
+                              </TableView>
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
+               </children>
+            </VBox>
+         </right>
+         <center>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: pink;" BorderPane.alignment="CENTER">
+               <children>
+                  <AnchorPane layoutX="22.0" layoutY="472.0" prefHeight="176.0" prefWidth="235.0">
+                     <children>
+                        <Label layoutX="14.0" layoutY="14.0" text="Staff on duty">
+                           <font>
+                              <Font name="League Spartan Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="staffTable" layoutY="35.0" prefHeight="213.0" prefWidth="680.0">
+                          <columns>
+                            <TableColumn fx:id="staffIdClmn" prefWidth="55.99999809265137" text="Staff ID" />
+                            <TableColumn fx:id="staffNameClmn" prefWidth="75.0" text="Name" />
+                              <TableColumn fx:id="staffSurnameClmn" prefWidth="75.0" text="Surname" />
+                              <TableColumn fx:id="staffRoleClmn" prefWidth="104.66673278808594" text="Staff Role" />
+                              <TableColumn fx:id="StaffHireDateClmn" prefWidth="89.3333740234375" text="Hire Date" />
+                              <TableColumn fx:id="staffBranchClmn" prefWidth="51.3333740234375" text="Branch" />
+                              <TableColumn fx:id="staffDutyClmn" prefWidth="240.00003051757812" text="Duty" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="attendanceStatisticsPane" layoutX="14.0" layoutY="76.0" prefHeight="285.0" prefWidth="363.0">
+                     <ProgressBar fx:id="totalPresentProgressBar" layoutX="27.0" layoutY="42.0" prefWidth="200" style="-fx-background-color: teal;" stylesheets="@styles.css" />
+                     <Label fx:id="totalPresentLabel" layoutX="237.0" layoutY="42.0" text="Total Present: 0%" />
+
+                     <ProgressBar fx:id="totalAbsentProgressBar" layoutX="27.0" layoutY="127.0" prefWidth="200" stylesheets="@styles.css" />
+                     <Label fx:id="totalAbsentLabel" layoutX="237.0" layoutY="127.0" text="Total Absent: 0%" />
+
+                     <Label fx:id="averageAttendanceLabel" layoutX="58.0" layoutY="202.0" text="Average Monthly Attendance: 0%">
+                        <font>
+                           <Font name="Times New Roman" size="18.0" />
+                        </font></Label>
+                  </AnchorPane>
+
+
+                  <LineChart fx:id="attendanceLineChart" layoutX="369.0" layoutY="17.0" prefHeight="448.0" prefWidth="397.0" title="Attendance Over Time">
+                     <xAxis>
+                        <CategoryAxis fx:id="attendanceXAxis" label="Time Period" prefHeight="33.0" prefWidth="304.0" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis fx:id="attendanceYAxis" label="Number of Attendees" />
+                     </yAxis>
+                  </LineChart>
+                  <Label fx:id="welcome" layoutX="14.0" layoutY="40.0" text="Welcome">
+                     <font>
+                        <Font name="League Spartan Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </center>
+         <top>
+            <HBox prefHeight="44.0" prefWidth="1265.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+               <children>
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="44.0" prefWidth="1268.0" style="-fx-background-color: teal;">
+                     <children>
+                        <ImageView fitHeight="73.0" fitWidth="301.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/veryhappy.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </HBox>
+         </top>
+      </BorderPane>
+   </content>
+</ScrollPane>

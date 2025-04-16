@@ -1,0 +1,466 @@
+package com.littlesteps.littlesteps.Controllers;
+
+import com.littlesteps.littlesteps.InvoiceItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class BillingInvoiceController {
+
+    public ScrollPane mainScrollPane;
+    @FXML
+    private Label childNameLabel;
+    @FXML
+    private Label dobLabel;
+    @FXML
+    private TableView<InvoiceItem> invoiceTable;
+    @FXML
+    private TableColumn<InvoiceItem, String> serviceColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, String> issueDateColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, Double> discountColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, Double> amountDueColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, Double> lateFeeColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, Double> totalAmountColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, String> dueDateColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, String> statusColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, String> paymentMethodColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, String> paymentDateColumn;
+
+    @FXML
+    private TableColumn<InvoiceItem, Integer> tenant_idColumn;
+
+    @FXML
+    private Label totalBalanceLabel;
+    @FXML
+    private ComboBox<String> paymentMethodDropdown;
+    @FXML
+    private ComboBox<String> childComboBox;
+    @FXML
+    private ComboBox<String> childNameDropdown;
+    private AnchorPane mainPane; // For applying the scroll pane
+
+    private final ObservableList<InvoiceItem> invoiceItems = FXCollections.observableArrayList(
+            new InvoiceItem("Monthly Childcare", "2024-11-01", 10.00, 250.00, 0.00, 240.00, "2024-11-15", "Paid", "Card", "2024-11-05", 1),
+            new InvoiceItem("Weekly Babysitting", "2024-11-03", 5.00, 100.00, 10.00, 110.00, "2024-11-17", "Overdue", null, null, 1),
+            new InvoiceItem("After-School Program", "2024-11-02", 5.00, 150.00, 0.00, 145.00, "2024-11-16", "Pending", null, null, 2),
+            new InvoiceItem("Monthly Childcare", "2024-11-01", 20.00, 300.00, 0.00, 280.00, "2024-11-20", "Paid", "Bank Transfer", "2024-11-10", 5),
+            new InvoiceItem("Weekly Babysitting", "2024-11-03", 0.00, 100.00, 10.00, 110.00, "2024-11-17", "Overdue", null, null, 3),
+            new InvoiceItem("Holiday Care Program", "2024-11-05", 0.00, 200.00, 0.00, 200.00, "2024-11-25", "Cancelled", null, null, 4),
+            new InvoiceItem("After-School Program", "2024-11-10", 0.00, 150.00, 5.00, 155.00, "2024-11-24", "Pending", null, null, 2),
+            new InvoiceItem("Monthly Childcare", "2024-11-01", 15.00, 250.00, 0.00, 235.00, "2024-11-20", "Paid", "Card", "2024-11-09", 3),
+            new InvoiceItem("Holiday Care Program", "2024-11-05", 0.00, 200.00, 0.00, 200.00,"2024 -11 -25","Overdue" ,null,null ,4)
+    );
+
+    private final DecimalFormat currencyFormat = new DecimalFormat("$#.00");
+
+    private final Map<Integer, ChildDetails> childData = new HashMap<>();
+    private Connection connection;
+    private ObservableList<String> childrenList = FXCollections.observableArrayList();
+
+
+    private void connectToDatabase() {
+        try {
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/littlestepsdaycare", "root", "password");
+            System.out.println("Database connection successful.");
+        } catch (SQLException e) {
+            System.out.println("Database connection failed: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void initialize() throws SQLException {
+        // Populate the child dropdown and payment method
+        paymentMethodDropdown.setItems(FXCollections.observableArrayList(
+                "Credit Card", "Cash", "Bank Transfer"
+        ));
+
+        // Populate child data
+        loadChildData();
+
+        // Populate ComboBox
+        ObservableList<String> childNames = FXCollections.observableArrayList();
+        childData.values().forEach(child -> childNames.add(child.getName()));
+        childComboBox.setItems(childNames);
+// Set up the columns in the table
+        serviceColumn.setCellValueFactory(cellData -> cellData.getValue().serviceProperty());
+        issueDateColumn.setCellValueFactory(cellData -> cellData.getValue().issueDateProperty());
+        discountColumn.setCellValueFactory(cellData -> cellData.getValue().discountProperty().asObject());
+        amountDueColumn.setCellValueFactory(cellData -> cellData.getValue().amountDueProperty().asObject());
+        lateFeeColumn.setCellValueFactory(cellData -> cellData.getValue().lateFeeProperty().asObject());
+        totalAmountColumn.setCellValueFactory(cellData -> cellData.getValue().totalAmountProperty().asObject());
+        dueDateColumn.setCellValueFactory(cellData -> cellData.getValue().dueDateProperty());
+        statusColumn.setCellValueFactory(cellData -> cellData.getValue().statusProperty());
+        paymentMethodColumn.setCellValueFactory(cellData -> cellData.getValue().paymentMethodProperty());
+        paymentDateColumn.setCellValueFactory(cellData -> cellData.getValue().paymentDateProperty());
+        tenant_idColumn.setCellValueFactory(cellData -> cellData.getValue().tenantIdProperty().asObject());
+
+
+        invoiceTable.setItems(invoiceItems);
+
+        updateTotalBalance();
+
+        invoiceItems.addListener((ListChangeListener<InvoiceItem>) change -> updateTotalBalance());
+    }
+
+    // Method to load child names into the combo box
+
+    private void loadChildData() {
+        childData.put(1, new ChildDetails("John Doe", "01/02/2015", List.of(
+                new InvoiceItem("Monthly Childcare", "2024-11-01", 10.00, 250.00, 0.00, 240.00, "2024-11-15", "Paid", "Card", "2024-11-05", 1),
+                new InvoiceItem("Weekly Babysitting", "2024-11-03", 5.00, 100.00, 10.00, 110.00, "2024-11-17", "Overdue", null, null, 1)
+        )));
+        childData.put(2, new ChildDetails("Jane Smith", "11/07/2014", List.of(
+                new InvoiceItem("After-School Program", "2024-11-02", 5.00, 150.00, 0.00, 145.00, "2024-11-16", "Pending", null, null, 2),
+                new InvoiceItem("Monthly Childcare", "2024-11-01", 20.00, 300.00, 0.00, 280.00, "2024-11-20", "Paid", "Bank Transfer", "2024-11-10", 5)
+        )));
+        // Add more children here...
+    }
+
+    private void updateChildDetails(String selectedChild) {
+        for (Map.Entry<Integer, ChildDetails> entry : childData.entrySet()) {
+            if (entry.getValue().getName().equals(selectedChild)) {
+                ChildDetails child = entry.getValue();
+                childNameLabel.setText(child.getName());
+                invoiceItems.setAll(child.getInvoices());
+                break;
+            }
+        }
+    }
+
+    private static class ChildDetails {
+        private final String name;
+
+        private String description;
+        private final List<InvoiceItem> invoices;
+
+        public ChildDetails(String name, String dob, List<InvoiceItem> invoices) {
+            this.name = name;
+            this.invoices = invoices;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<InvoiceItem> getInvoices() {
+            return invoices;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
+
+    public void loadChildComboBox() throws SQLException {
+        Connection connection = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3306/littlestepsdaycare", "root", "password");
+        System.out.println("Database connection successful.");
+
+        String query = "SELECT child_id, first_name, last_name FROM children";  // SQL query to fetch data
+
+        try {
+            // Check if the connection is open, if not, try connecting
+            if (connection == null || connection.isClosed()) {
+                connectToDatabase();  // Ensure connectToDatabase() is working properly
+            }
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // ObservableList to hold combo box items
+            ObservableList<String> childrenList = FXCollections.observableArrayList();
+
+            // Add results from database to the list
+            while (resultSet.next()) {
+                String fullName = resultSet.getString("first_name") + " " + resultSet.getString("last_name");
+                childrenList.add(fullName);  // Add the full name to the list
+            }
+
+            // Set items in the ComboBox
+            childComboBox.setItems(childrenList);
+
+            // Optional: You can set a default value
+            if (!childrenList.isEmpty()) {
+                childComboBox.getSelectionModel().selectFirst();  // Select the first item by default
+            }
+
+            // Set up listener for child selection changes
+            childComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    int childId = getChildIdByName(newValue); // Retrieves the ID of the selected child
+                    childNameLabel.setText(String.valueOf(childId)); // Updates details pane for the selected child
+                }
+            });
+
+            // Close the result set and prepared statement
+            resultSet.close();
+            preparedStatement.close();
+
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error loading combo box: " + e.getMessage());
+        }
+    }
+
+
+    private void updateChildDetails() {
+        String selectedChild = (String) childComboBox.getValue();
+        int childId = getChildIdByName(selectedChild);
+
+        if (selectedChild != null) {
+
+            // Clear previous invoice items
+            invoiceItems.clear();
+
+            // Load invoices based on child ID
+            if (childId == 1) { // John Doe
+                childNameLabel.setText("John Doe");
+                dobLabel.setText("01/02/2015");
+                invoiceItems.setAll(
+                        new InvoiceItem("Monthly Childcare", "2024-11-01", 10.00, 250.00, 0.00, 240.00, "2024-11-15", "Paid", "Card", "2024-11-05", 1),
+                        new InvoiceItem("Weekly Babysitting", "2024-11-03", 5.00, 100.00, 10.00, 110.00, "2024-11-17", "Overdue", null, null, 1)
+                );
+            } else if (childId == 2) { // Jane Smith
+                childNameLabel.setText("Jane Smith");
+                dobLabel.setText("11/07/2014");
+                invoiceItems.setAll(
+                        new InvoiceItem("After-School Program", "2024-11-02", 5.00, 150.00, 0.00, 145.00, "2024-11-16", "Pending", null, null, 2),
+                        new InvoiceItem("Monthly Childcare", "2024-11-01", 20.00, 300.00, 0.00, 280.00, "2024-11-20", "Paid", "Bank Transfer", "2024-11-10", 5)
+                );
+            } else if (childId == 3) { // Mike Johnson
+                childNameLabel.setText("Mike Johnson");
+                dobLabel.setText("03/15/2016"); // Example DOB
+                invoiceItems.setAll(
+                        new InvoiceItem("Weekly Babysitting", "2024-11-03", 0.00, 100.00, 10.00, 110.00, "2024-11-17", "Overdue", null, null, 3),
+                        new InvoiceItem("Holiday Care Program", "2024-11-05", 0.00, 200.00, 0.00, 200.00, "2024-11-25", "Cancelled", null, null, 4)
+                );
+            } else if (childId == 4) { // John Doe (duplicate for different invoices)
+                childNameLabel.setText("John Doe");
+                dobLabel.setText("01/02/2015");
+                invoiceItems.setAll(
+                        new InvoiceItem("Monthly Childcare", "2024-11-01", 10.00, 250.00, 0.00, 240.00, "2024-11-15", "Paid", "Card", "2024-11-05", 1)
+                );
+            } else if (childId == 5) { // Jane Smith (duplicate for different invoices)
+                childNameLabel.setText("Jane Smith");
+                dobLabel.setText("11/07/2014");
+                invoiceItems.setAll(
+                        new InvoiceItem("Monthly Childcare", "2024-11-01", 20.00, 300.00, 0.00, 280.00, "2024-11-20", "Paid", "Bank Transfer", "2024-11-10", 5)
+                );
+            } else if (childId == 6) { // Mike Johnson (duplicate for different invoices)
+                childNameLabel.setText("Mike Johnson");
+                dobLabel.setText("03/15/2016"); // Example DOB
+                invoiceItems.setAll(
+                        new InvoiceItem("Weekly Babysitting", "2024-11-03", 5.00, 100.00, 0.00, 95.00,"2024 -11 -18","Paid","Cash","2024 -11 -04" ,1)
+                );
+            } else if (childId == 7) { // John Doe (another entry)
+                childNameLabel.setText("John Doe");
+                dobLabel.setText("01/02/2015");
+                invoiceItems.setAll(
+                        new InvoiceItem("After-School Program", "2024-11-10", 0.00,150.00 ,5.00 ,155.00 ,"2024 -11 -24","Pending" ,null ,null ,2 )
+                );
+            } else if (childId == 8) { // Jane Smith (another entry)
+                childNameLabel.setText("Jane Smith");
+                dobLabel.setText("11/07/2014");
+                invoiceItems.setAll(
+                        new InvoiceItem("Monthly Childcare","2024 -11 -01" ,15.00 ,250.00 ,0.00 ,235.00 ,"2024 -11 -20" ,"Paid" ,"Card" ,"2024 -11 -09" ,3 )
+                );
+            } else if (childId == 9) { // Mike Johnson (another entry)
+                childNameLabel.setText("Mike Johnson");
+                dobLabel.setText("03/15/2016"); // Example DOB
+                invoiceItems.setAll(
+                        new InvoiceItem("Holiday Care Program","2024 -11 -05" ,0.00 ,200.00 ,0.00 ,200.00,"2024 -11 -25","Overdue" ,null ,null ,4 )
+                );
+            } else {
+                childNameLabel.setText ("Unknown Child");
+                dobLabel .setText ("");
+            }
+
+
+            updateTotalBalance(); // Update total balance after setting invoice items
+        }
+    }
+
+
+    private int getChildIdByName(String selectedChild) {
+        String[] nameParts = selectedChild.split(" "); // Split the full name into first and last names
+        if (nameParts.length != 2) {
+            return -1; // Invalid name format
+        }
+
+        String firstName = nameParts[0];
+        String lastName = nameParts[1];
+
+        String query = "SELECT child_id FROM children WHERE first_name = ? AND last_name = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("child_id"); // Return the child ID if found
+            } else {
+                return -1; // Child not found
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching child ID: " + e.getMessage());
+            return -1; // Error case
+        }
+    }
+
+
+    public void loadchildNameDropdown() {
+        String query = "SELECT first_name, last_name FROM children";  // SQL query to fetch data
+
+        try {
+            // Check if the connection is open, if not, try connecting
+            if (connection == null || connection.isClosed()) {
+                connectToDatabase();  // Ensure connectToDatabase() is working properly
+            }
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+
+            // Add results from database to the list
+            while (resultSet.next()) {
+                String fullName = resultSet.getString("first_name") + " " + resultSet.getString("last_name");
+                childrenList.add(fullName);  // Add the full name to the list
+            }
+
+            // Set items in the ComboBox
+            childNameDropdown.setItems((ObservableList<String>) childrenList);
+
+            // Optional: You can set a default value
+            if (!childrenList.isEmpty()) {
+                childNameDropdown.getSelectionModel().selectFirst();  // Select the first item by default
+            }
+
+            // Close the result set and prepared statement
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error loading combo box: " + e.getMessage());
+        }
+    }
+
+    private void updateTotalBalance() {
+        double total = invoiceItems.stream().mapToDouble(InvoiceItem::getAmount).sum();
+        totalBalanceLabel.setText(currencyFormat.format(total));
+    }
+
+
+
+    @FXML
+    private void handleProcessPayment() {
+        String paymentMethod = paymentMethodDropdown.getValue();
+        if (paymentMethod == null) {
+            showAlert("Please select a valid payment method.");
+            return;
+        }
+        showAlert("Payment processed successfully using: " + paymentMethod);
+    }
+
+    @FXML
+    private void handlePrintInvoice() {
+        if (invoiceTable.getScene() != null) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Invoice");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+            File file = fileChooser.showSaveDialog(invoiceTable.getScene().getWindow());
+
+            if (file != null) {
+                saveInvoiceToFile(file);
+            }
+        } else {
+            showAlert("Error: Scene not initialized.");
+        }
+    }
+
+
+    private void saveInvoiceToFile(File file) {
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write("Service\tDescription\tAmount\n");
+            for (InvoiceItem item : invoiceItems) {
+                writer.write(item.getService() + "\t" + "\t" + currencyFormat.format(item.getAmount()) + "\n");
+            }
+            writer.write("\nTotal Balance: " + totalBalanceLabel.getText());
+            showAlert("Invoice saved successfully!");
+        } catch (IOException e) {
+            showAlert("Failed to save invoice.");
+        }
+    }
+    private void showAlert(String message) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Action");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
+    // Method to navigate back to the dashboard
+    @FXML
+    public void backToDashboard(ActionEvent actionEvent) {
+        switchScene("dashboard.fxml", "Dashboard Screen");
+    }
+
+    @FXML
+    public void backToAdminDashboard(ActionEvent actionEvent) {
+        switchScene("adminDashboad.fxml", "Admin Dashboard");
+    }
+
+    private void switchScene(String fxmlFileName, String title) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/littlesteps/littlesteps/" + fxmlFileName));
+            Parent root = loader.load(); // Load the new scene
+
+            Stage stage = (Stage) mainScrollPane.getScene().getWindow(); // Get the current stage
+            stage.setScene(new Scene(root));
+            stage.setTitle(title);
+            stage.setFullScreen(true); // Set to full screen
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle exceptions
+        }
+    }
+}

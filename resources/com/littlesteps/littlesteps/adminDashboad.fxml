@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1250.0" style="-fx-background-color: white;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.littlesteps.littlesteps.Controllers.AdminDashboardController">
+    <content>
+        <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="734.0" prefWidth="1265.0" stylesheets="@styles.css">
+            <right>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="734.0" prefWidth="365.0" style="-fx-background-color: white;" BorderPane.alignment="TOP_RIGHT">
+                    <children>
+                        <SplitPane fx:id="right_splitpane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="734.0" prefWidth="306.0">
+                            <items>
+                                <AnchorPane fx:id="attendanceDisplay" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="247.0" style="-fx-background-color: pink;" stylesheets="@styles.css">
+                                    <children>
+                                        <Label layoutX="1.0" text="Metrics">
+                                            <graphic>
+                                                <ImageView fitHeight="36.0" fitWidth="41.0">
+                                                    <image>
+                                                        <Image url="@images/metricsIcon.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                            <font>
+                                                <Font name="System Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                              <TabPane layoutX="1.0" layoutY="38.0" prefHeight="321.0" prefWidth="329.0" tabClosingPolicy="UNAVAILABLE">
+                                <tabs>
+                                  <Tab style="-fx-background-color: yellow;" text="Billing and Payment">
+                                       <content>
+                                          <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;">
+                                             <children>
+                                                <BarChart fx:id="billingBarChart" layoutX="2.0" layoutY="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="268.0" prefWidth="327.0">
+                                                  <xAxis>
+                                                    <CategoryAxis side="BOTTOM" />
+                                                  </xAxis>
+                                                  <yAxis>
+                                                    <NumberAxis side="LEFT" />
+                                                  </yAxis>
+                                                </BarChart>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                  <Tab style="-fx-background-color: cyan;" text="Attendance">
+                                       <content>
+                                          <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: cyan;">
+                                             <children>
+                                                <LineChart fx:id="attendanceLineChart" layoutX="5.0" layoutY="7.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="261.0" prefWidth="320.0">
+                                                  <xAxis>
+                                                    <CategoryAxis side="BOTTOM" />
+                                                  </xAxis>
+                                                  <yAxis>
+                                                    <NumberAxis side="LEFT" />
+                                                  </yAxis>
+                                                </LineChart>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab style="-fx-background-color: pink;" text="Enrollment">
+                                      <content>
+                                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="292.0" prefWidth="371.0" style="-fx-background-color: pink;">
+                                             <children>
+                                                <PieChart fx:id="enrollmentPieChart" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="325.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </Tab>
+                                </tabs>
+                              </TabPane>
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane fx:id="activitiesPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="325.0" prefWidth="247.0" style="-fx-background-color: #B7A9B6;">
+                                    <children>
+                              <ImageView fitHeight="259.0" fitWidth="204.0" layoutX="-33.0" layoutY="103.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/peep.png" />
+                                 </image>
+                              </ImageView>
+                                        <Label layoutX="8.0" layoutY="20.0" text="Reports &amp; Downloads">
+                                            <graphic>
+                                                <ImageView fitHeight="35.0" fitWidth="39.0">
+                                                    <image>
+                                                        <Image url="@images/reportsIcon.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                 <font>
+                                    <Font name="System Bold" size="24.0" />
+                                 </font></Label>
+                              <CheckBox layoutX="108.0" layoutY="80.0" mnemonicParsing="false" onAction="#billingCheckbox" prefHeight="25.0" prefWidth="135.0" style="-fx-background-color: #42bdff; -fx-border-color: indigo; -fx-border-radius: 5px;" text="Billing" textAlignment="JUSTIFY" />
+                              <CheckBox layoutX="107.0" layoutY="134.0" mnemonicParsing="false" onAction="#staffCheckbox" prefHeight="25.0" prefWidth="135.0" style="-fx-background-color: gold; -fx-border-color: blue; -fx-border-radius: 5px;" text="Staff Records" />
+                              <CheckBox layoutX="107.0" layoutY="192.0" mnemonicParsing="false" onAction="#attCheckbox" prefHeight="25.0" prefWidth="135.0" style="-fx-background-color: #ff5acd; -fx-border-color: green; -fx-border-radius: 5px;" text="Attendance Records" />
+                              <CheckBox layoutX="109.0" layoutY="252.0" mnemonicParsing="false" onAction="#healthCheckbox" prefHeight="25.0" prefWidth="135.0" style="-fx-background-color: #22ff00; -fx-border-color: red; -fx-border-radius: 5px;" text="Health Records" />
+                              <Button layoutX="61.0" layoutY="293.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#downloadTxt" prefHeight="57.0" prefWidth="55.0" style="-fx-border-radius: 25; -fx-background-color: none;">
+                                 <graphic>
+                                    <ImageView fitHeight="57.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/blueDownload.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Circle fill="#42bdff" layoutX="76.0" layoutY="93.0" radius="12.0" stroke="BLACK" strokeType="INSIDE" />
+                              <Circle fill="GOLD" layoutX="75.0" layoutY="147.0" radius="12.0" stroke="BLACK" strokeType="INSIDE" />
+                              <Circle fill="#ff5acd" layoutX="75.0" layoutY="206.0" radius="12.0" stroke="BLACK" strokeType="INSIDE" />
+                              <Circle fill="#22ff00" layoutX="77.0" layoutY="266.0" radius="12.0" stroke="BLACK" strokeType="INSIDE" />
+                              <Text layoutX="68.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Download" />
+                              <Text layoutX="74.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="i">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Text>
+                              <Text layoutX="70.0" layoutY="154.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ii">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Text>
+                              <Text layoutX="68.0" layoutY="213.0" strokeType="OUTSIDE" strokeWidth="0.0" text="iii">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Text>
+                              <Text layoutX="70.0" layoutY="272.0" strokeType="OUTSIDE" strokeWidth="0.0" text="iv">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Text>
+                              <Button layoutX="232.0" layoutY="293.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#downloadCsv" prefHeight="57.0" prefWidth="55.0" style="-fx-border-radius: 25; -fx-background-color: none;">
+                                 <graphic>
+                                    <ImageView fitHeight="57.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/csv.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Text layoutX="220.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Download CSV" />
+                                    </children>
+                                </AnchorPane>
+                            </items>
+                        </SplitPane>
+                    </children>
+                </VBox>
+            </right>
+            <center>
+                <AnchorPane layoutX="6.0" layoutY="296.0" maxHeight="Infinity" maxWidth="Infinity" prefHeight="433.0" prefWidth="659.0" style="-fx-background-color: #ffffff;">
+                    <children>
+                        <TabPane fx:id="adminTabPane" layoutX="6.0" layoutY="256.0" maxHeight="Infinity" maxWidth="Infinity" prefHeight="463.0" prefWidth="654.0" tabClosingPolicy="UNAVAILABLE">
+                            <tabs>
+
+                                <!-- Daycare Branch Tab -->
+                                <Tab fx:id="daycareTab" style="-fx-background-color: #c496ff;" text="Daycare branch">
+                                    <content>
+                                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="654.0" style="-fx-background-color: #e2cbff;">
+                                 <Accordion fx:id="branchAccordion" layoutX="11.0" layoutY="28.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" prefWidth="225.0">
+                                   <panes>
+                                     <TitledPane animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #228B22; -fx-border-radius: 10px;" text="Branch ID: 1">
+                                       <content>
+                                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="23.0" prefWidth="315.0" style="-fx-background-color: #A52A2A;">
+                                                <children>
+                                                   <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="315.0" text="LittleSteps Forest" textFill="FORESTGREEN" />
+                                                   <ScrollBar layoutX="214.0" orientation="VERTICAL" prefHeight="273.0" prefWidth="10.0" />
+                                                </children>
+                                             </AnchorPane>
+                                       </content>
+                                     </TitledPane>
+                                     <TitledPane animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-radius: 10px;" text="Branch ID: 2">
+                                       <content>
+                                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #D2B48C;">
+                                                <children>
+                                                   <ScrollBar orientation="VERTICAL" prefHeight="273.0" prefWidth="10.0" />
+                                                </children>
+                                             </AnchorPane>
+                                       </content>
+                                     </TitledPane>
+                                     <TitledPane animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Branch ID: 3">
+                                       <content>
+                                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #87CEEB;">
+                                                <children>
+                                                   <ScrollBar orientation="VERTICAL" prefHeight="273.0" prefWidth="10.0" />
+                                                </children>
+                                             </AnchorPane>
+                                       </content>
+                                     </TitledPane>
+                                       <TitledPane animated="false" layoutX="10.0" layoutY="61.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-animated: left;" text="Branch ID: 4">
+                                          <content>
+                                             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #8A9A5B;">
+                                                <children>
+                                                   <ScrollBar orientation="VERTICAL" prefHeight="273.0" prefWidth="10.0" />
+                                                </children>
+                                             </AnchorPane>
+                                          </content>
+                                       </TitledPane>
+                                       <TitledPane animated="false" layoutX="10.0" layoutY="86.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Branch ID: 5">
+                                          <content>
+                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #D8BFD8;">
+                                                <children>
+                                                   <ScrollBar orientation="VERTICAL" prefHeight="273.0" prefWidth="10.0" />
+                                                </children>
+                                             </AnchorPane>
+                                          </content>
+                                       </TitledPane>
+                                   </panes>
+                                 </Accordion>
+                                            <TableView fx:id="daycareTable" layoutX="255.0" layoutY="28.0" prefHeight="175.0" prefWidth="390.0">
+                                                <columns>
+                                                    <TableColumn fx:id="branchIdColumn" prefWidth="59.333343505859375" text="Branch ID" />
+                                                    <TableColumn fx:id="branchNameColumn" prefWidth="172.0" text="Branch Name" />
+                                                    <TableColumn fx:id="contactColumn" prefWidth="156.66671752929688" text="Contact Info" />
+                                                </columns>
+                                            </TableView>
+                                        </AnchorPane>
+                                    </content>
+                                </Tab>
+
+                                <!-- Staff Tab -->
+                                <Tab fx:id="staffTab" style="-fx-background-color: orange;" text="Staff tab">
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: orange;">
+                                            <TableView fx:id="staffTable" layoutX="10.0" layoutY="18.0" prefHeight="407.0" prefWidth="580.0">
+                                                <columns>
+                                                    <TableColumn fx:id="staffIdClmn" text="Staff ID" />
+                                                    <TableColumn fx:id="staffNameClmn" prefWidth="122.66666412353516" text="Name" />
+                                       <TableColumn fx:id="staffSurnameClmn" prefWidth="75.0" text="Surname" />
+                                                    <TableColumn fx:id="staffRoleClmn" prefWidth="91.33335876464844" text="Role" />
+                                                    <TableColumn fx:id="StaffHireDateClmn" prefWidth="81.333251953125" text="Hire Date" />
+                                                    <TableColumn fx:id="staffBranchClmn" prefWidth="77.3333740234375" text="Branch" />
+                                                </columns>
+                                            </TableView>
+                                        </AnchorPane>
+                                    </content>
+                                </Tab>
+
+                                <!-- Parents Tab -->
+                                <Tab fx:id="parentsTab" style="-fx-background-color: #8dd7ff;" text="Parents tab">
+                                    <content>
+                                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #8dd7ff;">
+                                 <HBox layoutX="6.0" layoutY="33.0" prefHeight="385.0" prefWidth="641.0">
+                                    <children>
+                                       <TableView fx:id="parentTable" prefHeight="247.0" prefWidth="272.0">
+                                         <columns>
+                                           <TableColumn fx:id="parentFirstNameClmn" prefWidth="79.33327960968018" text="First Name" />
+                                           <TableColumn fx:id="parentLastNameClmn" prefWidth="79.9999771118164" text="Last Name" />
+                                             <TableColumn fx:id="parentContactClmn" prefWidth="116.00010681152344" text="Contact Info" />
+                                         </columns>
+                                       </TableView>
+                                       <TableView fx:id="rlshipTable" prefHeight="385.0" prefWidth="108.0">
+                                         <columns>
+                                           <TableColumn fx:id="rlship" prefWidth="90.0" text="Relationship" />
+                                         </columns>
+                                          <opaqueInsets>
+                                             <Insets left="75.0" />
+                                          </opaqueInsets>
+                                       </TableView>
+                                       <TableView fx:id="childrenTable" prefHeight="247.0" prefWidth="265.0">
+                                         <columns>
+                                           <TableColumn fx:id="childFirstNameClmn" prefWidth="90.0" text="First Name" />
+                                           <TableColumn fx:id="childLastNameClmn" prefWidth="90.0" text="Last Name" />
+                                             <TableColumn fx:id="childBranchClmn" prefWidth="75.0" text="Branch" />
+                                         </columns>
+                                       </TableView>
+                                    </children>
+                                 </HBox>
+                                        </AnchorPane>
+                                    </content>
+                                </Tab>
+
+                                <!-- Health Records Tab -->
+                                <Tab fx:id="healthTab" style="-fx-background-color: #b7b7b7;" text="Health records">
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #b7b7b7;">
+                                 <children>
+                                    <TableView fx:id="HRecordTable" layoutX="4.0" layoutY="6.0" prefHeight="426.0" prefWidth="646.0">
+                                      <columns>
+                                        <TableColumn fx:id="hReportIdClmn" prefWidth="38.66667318344116" text="No." />
+                                        <TableColumn fx:id="hChildIdClmn" prefWidth="54.666683197021484" text="Child Id" />
+                                          <TableColumn fx:id="hIncidentClmn" prefWidth="173.99996185302734" text="Incident" />
+                                          <TableColumn fx:id="hIssueClmn" prefWidth="118.66665649414062" text="Health Issue" />
+                                          <TableColumn fx:id="hReportClmn" prefWidth="106.0" text="Report Date" />
+                                          <TableColumn fx:id="hBloodClmn" prefWidth="78.00003051757812" text="Blood Type" />
+                                          <TableColumn fx:id="hTenantIdClmn" prefWidth="74.66668701171875" text="Branch" />
+                                      </columns>
+                                    </TableView>
+                                 </children>
+                                        </AnchorPane>
+                                    </content>
+                                </Tab>
+
+                            </tabs>
+                        </TabPane>
+                  <Pane layoutX="14.0" layoutY="14.0" prefHeight="91.0" prefWidth="200.0" style="-fx-background-color: #e2cbff;">
+                     <children>
+                        <Button layoutX="1.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleDaycareClick" prefHeight="33.0" prefWidth="198.0" text="Open➡">
+                           <font>
+                              <Font name="League Spartan Regular" size="8.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="19.0" layoutY="13.0" prefHeight="29.0" prefWidth="163.0" text="Daycare Branch" textFill="#e2cbff">
+                           <graphic>
+                              <ImageView fitHeight="29.0" fitWidth="34.0">
+                                 <image>
+                                    <Image url="@images/img.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="233.0" layoutY="14.0" prefHeight="91.0" prefWidth="200.0" style="-fx-background-color: #ffc8ee;">
+                     <children>
+                        <Button layoutX="1.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleChildrenClick" prefHeight="33.0" prefWidth="198.0" text="Open➡">
+                           <font>
+                              <Font name="League Spartan Regular" size="8.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="19.0" layoutY="13.0" prefHeight="29.0" prefWidth="163.0" text="Children">
+                           <graphic>
+                              <ImageView fitHeight="29.0" fitWidth="34.0">
+                                 <image>
+                                    <Image url="@images/childrenIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="453.0" layoutY="14.0" prefHeight="91.0" prefWidth="200.0" style="-fx-background-color: orange;">
+                     <children>
+                        <Button layoutX="1.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleStaffClick" prefHeight="33.0" prefWidth="198.0" text="Open➡">
+                           <font>
+                              <Font name="League Spartan Regular" size="8.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="19.0" layoutY="13.0" prefHeight="29.0" prefWidth="163.0" text="Staff">
+                           <graphic>
+                              <ImageView fitHeight="29.0" fitWidth="34.0">
+                                 <image>
+                                    <Image url="@images/staffIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="14.0" layoutY="125.0" prefHeight="91.0" prefWidth="200.0" style="-fx-background-color: #8dd7ff;">
+                     <children>
+                        <Button layoutX="1.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleParentsClick" prefHeight="33.0" prefWidth="198.0" text="Open➡">
+                           <font>
+                              <Font name="League Spartan Regular" size="8.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="19.0" layoutY="13.0" prefHeight="29.0" prefWidth="163.0" text="Parents">
+                           <graphic>
+                              <ImageView fitHeight="29.0" fitWidth="34.0">
+                                 <image>
+                                    <Image url="@images/parentsIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="233.0" layoutY="125.0" prefHeight="91.0" prefWidth="200.0" style="-fx-background-color: grey;">
+                     <children>
+                        <Button layoutX="1.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleRecordsClick" prefHeight="33.0" prefWidth="198.0" text="Open➡">
+                           <font>
+                              <Font name="League Spartan Regular" size="8.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="19.0" layoutY="13.0" prefHeight="29.0" prefWidth="163.0" text="Health Records">
+                           <graphic>
+                              <ImageView fitHeight="29.0" fitWidth="34.0">
+                                 <image>
+                                    <Image url="@images/hRecordIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
+                     </children>
+                  </Pane>
+                    </children>
+                </AnchorPane>
+
+            </center>
+         <left>
+                <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="709.0" prefWidth="233.0" style="-fx-background-color: teal;" BorderPane.alignment="CENTER">
+                    <children>
+                  <ImageView fitHeight="104.0" fitWidth="114.0" VBox.vgrow="ALWAYS">
+                     <image>
+                        <Image url="@images/logo.png" />
+                     </image>
+                  </ImageView>
+                        <Button alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleHomebtn" prefHeight="67.0" prefWidth="132.0" stylesheets="@styles.css" text="Home" textAlignment="RIGHT">
+                            <graphic>
+                                <ImageView fitHeight="35.0" fitWidth="35.0">
+                                    <image>
+                                        <Image url="@images/homepage.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <VBox.margin>
+                                <Insets left="25.0" right="25.0" top="10.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleChildrenbtn" prefHeight="67.0" prefWidth="95.0" text="Children" textAlignment="RIGHT">
+                            <graphic>
+                                <ImageView fitHeight="50.0" fitWidth="59.0">
+                                    <image>
+                                        <Image url="@images/childrenIcon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <VBox.margin>
+                                <Insets left="25.0" right="25.0" top="25.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button alignment="TOP_RIGHT" layoutX="35.0" layoutY="177.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleBillingbtn" prefHeight="67.0" prefWidth="169.0" text="Billing" textAlignment="RIGHT">
+                            <graphic>
+                                <ImageView fitHeight="50.0" fitWidth="59.0">
+                                    <image>
+                                        <Image url="@images/billing.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <VBox.margin>
+                                <Insets left="25.0" right="25.0" top="25.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button alignment="TOP_RIGHT" layoutX="35.0" layoutY="301.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleArticlebtn" prefHeight="67.0" prefWidth="109.0" text="Articles" textAlignment="RIGHT">
+                            <graphic>
+                                <ImageView fitHeight="41.0" fitWidth="44.0">
+                                    <image>
+                                        <Image url="@images/articlesIcon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <VBox.margin>
+                                <Insets left="25.0" right="25.0" top="25.0" />
+                            </VBox.margin>
+                        </Button>
+                  <Button alignment="TOP_RIGHT" layoutX="35.0" layoutY="416.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleEventsbtn" prefHeight="58.0" prefWidth="119.0" text="Event and notification" textAlignment="RIGHT">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="59.0">
+                           <image>
+                              <Image url="@images/eventsIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="25.0" top="25.0" />
+                     </VBox.margin>
+                  </Button>
+                        <Button alignment="TOP_RIGHT" layoutX="35.0" layoutY="301.0" mnemonicParsing="false" onAction="#handleLogoutbtn" prefHeight="49.0" prefWidth="165.0" style="-fx-background-color: teal; -fx-border-radius: 25; -fx-border-color: red; -fx-text-fill: red;" text="Log Out" textAlignment="RIGHT" textFill="RED">
+                            <graphic>
+                                <ImageView fitHeight="50.0" fitWidth="59.0">
+                                    <image>
+                                        <Image url="@images/logouticon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <VBox.margin>
+                                <Insets left="25.0" right="5.0" top="25.0" />
+                            </VBox.margin>
+                        </Button>
+                    </children>
+                </VBox>
+         </left>
+        </BorderPane>
+    </content>
+</ScrollPane>

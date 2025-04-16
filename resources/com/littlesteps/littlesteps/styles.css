@@ -1,0 +1,113 @@
+/* Background colors */
+.grid-pane {
+    -fx-background-color: #FFB6C1;
+    -fx-padding: 20px;
+}
+
+.registration-form {
+    -fx-background-color: #FFB6C1;
+    -fx-padding: 10px;
+    -fx-border-color: #40E0D0;
+    -fx-border-width: 2px;
+}
+
+/* Text colors */
+.label {
+    -fx-text-fill: #000000;
+}
+
+.button {
+    -fx-background-color: #40E0D0;
+    -fx-text-fill: #FFFFFF;
+}
+
+.text-field, .password-field, .combo-box {
+    -fx-background-color: #FFFACD;
+}
+
+/* Login button style */
+.button {
+    -fx-background-color: pink; /* Default color */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 25;
+}
+
+.button:pressed {
+    -fx-background-color: #000000; /* Color when pressed */
+}
+
+/* Specific elements */
+.link-label {
+    -fx-text-fill: #40E0D0;
+    -fx-cursor: hand;
+}
+.background {
+    -fx-background-color: #f9f9f9;
+}
+.label-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+.label-subheader {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+.table-header {
+    -fx-background-color: #e0f7fa;
+}
+.header-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-text-fill: #2A9D8F; /* Example color */
+}
+
+.section-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #264653;
+}
+
+.child-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+.total-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E76F51;
+}
+
+.total-amount {
+    -fx-font-size: 14px;
+    -fx-text-fill: #E76F51;
+    -fx-font-weight: bold;
+}
+
+.table-view {
+    -fx-background-color: #E9C46A;
+}
+
+.button {
+    -fx-background-color: teal;
+    -fx-text-fill: #000000;
+    -fx-border-radius: 25px;
+}
+
+.button:hover {
+    -fx-background-color: pink;
+}
+
+.totalPresentProgressBar {
+    -fx-accent: teal;
+}
+
+.totalAbsentProgressBar {
+    -fx-accent: pink;
+}
+
+
