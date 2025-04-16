@@ -1,3 +1,4 @@
+```markdown
 LittleSteps Daycare Project
 
 Table of Contents
@@ -56,3 +57,46 @@ Setup Instructions
    - MySQL server installed and configured.  
 
 2. Clone the repository:  
+   ```
+   git clone https://github.com/Joy-K-Wambui/littlesteps-daycare.git  
+   cd littlesteps-daycare  
+   ```
+
+3. Set up the database:  
+   - Create a new MySQL database named `littlesteps`.  
+   - Import the provided SQL scripts located in the `/db` folder to initialize the database structure.  
+
+4. Update Database Configuration:  
+   - Modify the `config.properties` file in the `/src/main/resources` directory to include your MySQL credentials.  
+
+5. Build the project:  
+   ```
+   gradle build  
+   ```
+
+6. Run the application:  
+   ```
+   gradle run  
+   ```
+
+Usage  
+- After successful execution, the application will open in a new window.  
+- Users can log in using their credentials.  
+- Once logged in, users will have access based on their assigned roles (Admin, Staff, Parent).  
+- Navigate through the menus to access different features such as Attendance, Billing, Events, and Notifications.  
+
+Contributing  
+We welcome contributions to the LittleSteps Daycare project! If you would like to contribute, please follow these steps:  
+1. Fork the repository.  
+2. Create a new branch (`git checkout -b feature/YourFeatureName`).  
+3. Make your changes and commit (`git commit -m 'Add your feature'`).  
+4. Push to the branch (`git push origin feature/YourFeatureName`).  
+5. Open a pull request.  
+
+Contact  
+For any inquiries or further information, please reach out to:  
+- Email: www.renkambuwa@gmail.com
+
+Thank you for your interest in the LittleSteps Daycare project! I hope you find it useful and contribute to its development.
+```
+
